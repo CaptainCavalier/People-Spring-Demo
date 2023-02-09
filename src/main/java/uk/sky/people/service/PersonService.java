@@ -4,7 +4,7 @@ import uk.sky.people.entities.Person;
 
 import java.util.List;
 
-public interface PeopleService {  // interfaces cannot be instantiated because they are abstract
+public interface PersonService {  // interfaces cannot be instantiated because they are abstract
 
     public abstract Person createPerson(Person p);
 
@@ -12,7 +12,7 @@ public interface PeopleService {  // interfaces cannot be instantiated because t
 
     List<Person> getAll();
 
-    Person update(int id, String name, int age, String job);
+    Person update(int id, String name, Integer age, String job);
 
     Person remove(int id);
 }
