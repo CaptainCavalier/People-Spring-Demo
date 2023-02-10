@@ -1,6 +1,8 @@
 package uk.sky.people.rest;
 
 import org.springframework.web.bind.annotation.*;
+import uk.sky.people.dto.PersonDTO;
+import uk.sky.people.dto.PersonReqDTO;
 import uk.sky.people.entities.Person;
 import uk.sky.people.service.PersonService;
 import uk.sky.people.service.PersonServiceList;
@@ -14,6 +16,8 @@ import java.util.List;
 public class PersonController {
 
    // the service variable is a dependency
+    // @Autowired -> also injects the dependency but isn't as good as constructor injection
+
     private PersonService service;
 
     public PersonController(PersonService service) {
@@ -32,30 +36,64 @@ public class PersonController {
     }
 
     @PostMapping("/create")
-    public Person addPerson(@RequestBody @Valid Person person) { // pulls person from the body of the request
-        return this.service.createPerson(person);
+    public PersonDTO addPerson(@RequestBody @Valid PersonReqDTO person) { // pulls person from the body of the request
+        Person toCreate = new Person(person.getFullName(), person.getOldNess(), person.getOccupation(), person.getNotNiNumber());
+        Person created  = this.service.createPerson(toCreate);
+
+        PersonDTO dto = new PersonDTO(created.getName(), created.getAge(), created.getJob());
+
+        return dto;
     }
 
     @GetMapping("/getAll")
-    public List<Person> getAll() {
-        return this.service.getAll();
+    public List<PersonDTO> getAll() {
+        List<PersonDTO> dtos = new ArrayList<>();
+        List<Person> found = this.service.getAll();
+//        standard for loop:
+//        for (int i = 0; i < found.size(); i++) {
+//            Person person = found.get(i);
+//            PersonDTO dto = new PersonDTO(person.getName(), person.getAge(), person.getJob());
+//            dtos.add(dto);
+//        }
+
+//        for each Person(object)in person(list) in found
+        for (Person person : found){
+
+           PersonDTO dto = new PersonDTO(person.getName(), person.getAge(), person.getJob());
+           dtos.add(dto);
+
+        }
+
+        return dtos;
     }
 
 
     @GetMapping("/get/{id}")
-    public Person getPerson(@PathVariable int id) {  //pulls id from the path (url)
-        return this.service.getById(id);
+    public PersonDTO getPerson(@PathVariable int id) {  //pulls id from the path (url)
+        Person found = this.service.getById(id);
+
+        PersonDTO dto = new PersonDTO(found.getName(), found.getAge(), found.getJob());
+
+        return dto;
     }
 
     @PatchMapping("/update/{id}")
-    public Person updatePerson(@PathVariable int id, @PathParam("name") String name, @PathParam("age") Integer age, @PathParam("job") String job) {
-        return this.service.update(id, name, age, job);
+    public PersonDTO updatePerson(@PathVariable int id, @PathParam("name") String name, @PathParam("age") Integer age, @PathParam("job") String job) {
+        Person updated = this.service.update(id, name, age, job);
+
+        PersonDTO dto = new PersonDTO(updated.getName(), updated.getAge(), updated.getJob());
+
+        return dto;
     }
 
 
     @DeleteMapping("/remove/{id}")
-    public Person removePerson(@PathVariable int id) {
-        return this.service.remove(id);
+    public PersonDTO removePerson(@PathVariable int id) {
+        Person remove = this.service.remove(id);
+
+        PersonDTO dto = new PersonDTO(remove.getName(), remove.getAge(), remove.getJob());
+
+        return dto;
     }
 
 

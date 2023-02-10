@@ -1,10 +1,12 @@
 package uk.sky.people.service;
 
+import org.springframework.stereotype.Service;
 import uk.sky.people.entities.Person;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//@Service
 public class PersonServiceList implements PersonService {
 
     private List<Person> people = new ArrayList<>();
