@@ -1,5 +1,7 @@
 package uk.sky.people.rest;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.sky.people.dto.PersonDTO;
 import uk.sky.people.dto.PersonReqDTO;
@@ -36,13 +38,14 @@ public class PersonController {
     }
 
     @PostMapping("/create")
-    public PersonDTO addPerson(@RequestBody @Valid PersonReqDTO person) { // pulls person from the body of the request
+    public ResponseEntity<PersonDTO> addPerson(@RequestBody @Valid PersonReqDTO person) { // pulls person from the body of the request
         Person toCreate = new Person(person.getFullName(), person.getOldNess(), person.getOccupation(), person.getNotNiNumber());
         Person created  = this.service.createPerson(toCreate);
 
         PersonDTO dto = new PersonDTO(created.getName(), created.getAge(), created.getJob());
 
-        return dto;
+        return new ResponseEntity<PersonDTO>(dto, HttpStatus.CREATED);
+
     }
 
     @GetMapping("/getAll")
