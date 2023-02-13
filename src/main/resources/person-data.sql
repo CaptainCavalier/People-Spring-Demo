@@ -1,0 +1,1 @@
+insert into person (id, age, job, name, ni_number) values (default, 33, 'Dev', 'Anthony I', '@£$%^^&&*');

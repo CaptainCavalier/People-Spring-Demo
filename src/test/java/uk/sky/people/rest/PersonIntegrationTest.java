@@ -1,5 +1,6 @@
 package uk.sky.people.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import uk.sky.people.dto.PersonDTO;
 import uk.sky.people.dto.PersonReqDTO;
+import uk.sky.people.entities.Person;
+
+import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)// random port will assign its test to a random port to ensure itll run
 // above line loads the app context with all your beans
 @AutoConfigureMockMvc  // sets up the testing library
-@Sql(scripts = {"classpath:person-schema.sql", "classpath:person-date.sql"})
+@Sql(scripts = {"classpath:person-schema.sql", "classpath:person-data.sql"})
 public class PersonIntegrationTest {
 
 
@@ -45,5 +49,63 @@ public class PersonIntegrationTest {
 
         this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
     }
+
+
+
+    @Test
+    void testGet() throws Exception {
+
+        RequestBuilder req = MockMvcRequestBuilders.get("/get/1");
+
+        ResultMatcher checkStatus = MockMvcResultMatchers.status().isOk();
+        PersonDTO person = new PersonDTO("Anthony I", 33, "Dev");
+        ResultMatcher checkBody = MockMvcResultMatchers.content().json(this.mapper.writeValueAsString(person));
+
+        this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+    }
+
+    @Test
+    void testGetAll() throws Exception {
+
+        RequestBuilder req = MockMvcRequestBuilders.get("/getAll");
+
+        ResultMatcher checkStatus = MockMvcResultMatchers.status().isOk();
+        PersonDTO person = new PersonDTO("Anthony I", 33, "Dev");
+        ResultMatcher checkBody = MockMvcResultMatchers.content().json(this.mapper.writeValueAsString(List.of(person)));
+
+        this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+    }
+
+    @Test
+    void testRemove() throws Exception {
+
+        PersonDTO person = new PersonDTO("Anthony I", 33, "Dev");
+
+//        RequestBuilder req = MockMvcRequestBuilders.delete("/remove/1");
+        RequestBuilder req = MockMvcRequestBuilders.delete("/remove/1").contentType(MediaType.APPLICATION_JSON);
+
+        ResultMatcher checkStatus = MockMvcResultMatchers.status().isOk();
+
+        ResultMatcher checkBody = MockMvcResultMatchers.content().json(this.mapper.writeValueAsString(person));
+
+        this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+
+    }
+
+
+    @Test
+    void testUpdate() throws Exception {
+        RequestBuilder req = MockMvcRequestBuilders.patch("/update/1").queryParam("name", "Anthony").queryParam("age", "30").queryParam("job", "MagicMan");
+
+        ResultMatcher checkStatus = MockMvcResultMatchers.status().isOk();
+        PersonDTO person = new PersonDTO("Anthony", 30, "MagicMan");
+
+        ResultMatcher checkBody = MockMvcResultMatchers.content().json(this.mapper.writeValueAsString(person));
+
+        this.mvc.perform(req).andExpect(checkStatus).andExpect(checkBody);
+
+    }
+
+
 
 }
