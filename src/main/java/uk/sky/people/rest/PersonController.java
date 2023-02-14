@@ -29,7 +29,7 @@ public class PersonController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String greeting() {
-        return "Hello, World!";
+        return "Hello Team Tribute! Welcome to your server";
     }
 
     @RequestMapping(value = "home", method = RequestMethod.GET)
